@@ -3,6 +3,14 @@ $as_ubuntu = '/usr/bin/sudo -u ubuntu -H bash -l -c'
 $ruby_ver = "1.9.3"
 $exec_path = "/bin/:/sbin/:/usr/bin/:/usr/sbin/"
 
+class version_control{
+    package {'git':
+    	provider =>	$package_manager
+    }
+    package {'subversion':
+    	provider =>	$package_manager
+    }
+}
 class ruby-dev{
     package {'ruby1.9.1-dev':
     	provider =>	$package_manager
@@ -62,6 +70,7 @@ $package_manager = $operatingsystem ?{
 	ubuntu	=> apt,
 	centos	=> yum
 }
+include version_control
 include ruby-dev
 include rvm_stuff
 include nginx
