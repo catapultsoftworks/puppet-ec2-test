@@ -3,6 +3,18 @@ $as_ubuntu = '/usr/bin/sudo -u ubuntu -H bash -l -c'
 $ruby_ver = "1.9.3"
 $exec_path = "/bin/:/sbin/:/usr/bin/:/usr/sbin/"
 
+#not sure if i can lose the other curl definition
+    package{'curl':
+    	ensure => installed,
+    	provider => $package_manager
+    }	
+class neo4j {
+    exec { 'get_neo4j_installer':
+      command => "${as_ubuntu} 'wget https://raw.github.com/neo4j-contrib/neo4j-puppet/master/go --output-document=\'${home}/neo4j_go\''",
+      require => Package['curl'],
+      path => "${exec_path}"
+    }
+}
 class version_control{
     package {'git':
     	provider =>	$package_manager
@@ -73,5 +85,6 @@ $package_manager = $operatingsystem ?{
 include version_control
 include ruby-dev
 include rvm_stuff
+include neo4j
 include nginx
 include unicorn
