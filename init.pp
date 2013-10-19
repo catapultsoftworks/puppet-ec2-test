@@ -3,6 +3,16 @@ $as_ubuntu = '/usr/bin/sudo -u ubuntu -H bash -l -c'
 $ruby_ver = "1.9.3"
 $exec_path = "/bin/:/sbin/:/usr/bin/:/usr/sbin/"
 
+class ruby-dev{
+    package {'ruby1.9.1-dev':
+    	provider =>	$package_manager
+    }
+    ->
+    package {'gem':
+    	ensure =>	latest,
+    	provider =>	$package_manager
+    }
+}
 class rvm_stuff{
     package{'curl':
     	ensure => installed,
@@ -25,6 +35,14 @@ class rvm_stuff{
       path => "${exec_path}:/home/ubuntu/.rvm/bin/rvm"
     }
     
+    exec { 'default ruby':
+        command => "${home}/.rvm/bin/rvm --default use ${ruby_ver}",
+	require => Exec['install_ruby']
+    }
+    package {'rails':
+	ensure => "3.2.3",
+	provider => "gem",
+    }
 }
 class nginx {
     package {'nginx':
@@ -44,6 +62,7 @@ $package_manager = $operatingsystem ?{
 	ubuntu	=> apt,
 	centos	=> yum
 }
+include ruby-dev
 include rvm_stuff
-#include nginx
-#include unicorn
+include nginx
+include unicorn
