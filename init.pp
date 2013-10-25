@@ -8,6 +8,11 @@ $exec_path = "/bin/:/sbin/:/usr/bin/:/usr/sbin/"
     	ensure => installed,
     	provider => $package_manager
     }	
+class nodejs{
+	package{'nodejs':
+		ensure=> installed
+	}
+}
 class neo4j {
     exec { 'get_neo4j_installer':
       command => "${as_ubuntu} 'wget https://raw.github.com/neo4j-contrib/neo4j-puppet/master/go --output-document=\'${home}/neo4j_go\''",
@@ -34,10 +39,10 @@ class ruby-dev{
     }
 }
 class rvm_stuff{
-    package{'curl':
-    	ensure => installed,
-    	provider => $package_manager
-    }	
+#    package{'curl':
+#    	ensure => installed,
+#    	provider => $package_manager
+#    }	
     exec { 'install_rvm':
       command => "${as_ubuntu} 'curl -L https://get.rvm.io | bash -s stable'",
       creates => "${home}/.rvm",
@@ -60,7 +65,7 @@ class rvm_stuff{
 	require => Exec['install_ruby']
     }
     package {'rails':
-	ensure => "3.2.3",
+	ensure => "3.2.14",
 	provider => "gem",
     }
 }
@@ -88,3 +93,4 @@ include rvm_stuff
 include neo4j
 include nginx
 include unicorn
+include nodejs
